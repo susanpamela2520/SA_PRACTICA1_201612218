@@ -266,186 +266,19 @@ El diagrama entidad–relación representa la estructura de la base de datos y m
 
 El diseño busca mantener la información organizada, evitar datos duplicados y facilitar el control de usuarios, pedidos, entregas y calificaciones.
 
----
+## Arquitectura Orientada a Microservicios
 
-## 1. Entidad Usuarios
+El sistema Delivereats fue diseñado siguiendo una arquitectura orientada a microservicios, donde cada dominio funcional del sistema representa un microservicio independiente.
 
-La entidad **usuarios** almacena la información de todas las personas que utilizan el sistema.  
-Un usuario puede tener diferentes roles dentro de la plataforma, como cliente, restaurante, repartidor o administrador.
+Aunque el modelo entidad–relación se presenta de forma unificada para facilitar su comprensión y desarrollo académico, las entidades se encuentran claramente separadas por responsabilidad, lo que permite su desacoplamiento en bases de datos independientes.
 
-### Atributos principales:
-- Identificador del usuario
-- Correo electrónico
-- Contraseña encriptada
-- Rol del usuario
-- Nombre completo
-- Teléfono
-- Estado del usuario
-- Fecha de registro
+### Separación por Microservicios
 
-### Relaciones:
-- Un usuario cliente puede realizar muchas órdenes.
-- Un usuario restaurante está asociado a un solo restaurante.
-- Un usuario repartidor está asociado a un solo repartidor.
-- Un usuario puede recibir varias notificaciones.
+- **Microservicio de Usuarios**: gestiona la información de los usuarios del sistema, incluyendo clientes, restaurantes y repartidores, así como sus roles.
+- **Microservicio de Restaurantes**: administra los restaurantes registrados y los ítems de menú disponibles.
+- **Microservicio de Órdenes**: se encarga de la creación y gestión de órdenes realizadas por los clientes.
+- **Microservicio de Entregas**: controla el proceso de entrega, asignación de repartidores y estado de las entregas.
 
----
+Cada microservicio mantiene su propia base de datos, evitando dependencias directas mediante llaves foráneas entre servicios. La relación entre los microservicios se realiza de manera lógica utilizando identificadores (IDs), lo cual cumple con los principios de desacoplamiento y escalabilidad propios de la arquitectura de microservicios.
 
-## 2. Entidad Restaurantes
-
-La entidad **restaurantes** contiene la información de los establecimientos que ofrecen comida en la plataforma.
-
-### Atributos principales:
-- Usuario propietario del restaurante
-- Nombre del restaurante
-- Dirección
-- Teléfono
-- Categoría de comida
-- Calificación promedio
-- Estado del restaurante
-
-### Relaciones:
-- Cada restaurante pertenece a un usuario.
-- Un restaurante puede tener muchos ítems en su menú.
-- Un restaurante puede recibir muchas órdenes.
-- Un restaurante puede recibir varias calificaciones.
-
----
-
-## 3. Entidad Items del Menú
-
-La entidad **items_menu** representa los platillos o productos que ofrece cada restaurante.
-
-### Atributos principales:
-- Restaurante al que pertenece
-- Nombre del platillo
-- Descripción
-- Precio
-- Categoría
-- Disponibilidad
-- Tiempo de preparación
-
-### Relaciones:
-- Un restaurante puede tener muchos ítems de menú.
-- Un ítem del menú puede formar parte de muchas órdenes.
-
----
-
-## 4. Entidad Órdenes
-
-La entidad **ordenes** registra los pedidos realizados por los clientes dentro del sistema.
-
-### Atributos principales:
-- Número de orden
-- Cliente que realiza la orden
-- Restaurante al que se le hace el pedido
-- Dirección de entrega
-- Subtotal
-- Costo de envío
-- Total
-- Estado de la orden
-- Fecha de creación
-
-### Relaciones:
-- Un cliente puede realizar muchas órdenes.
-- Un restaurante puede recibir muchas órdenes.
-- Una orden contiene varios ítems.
-- Una orden tiene una sola entrega.
-- Una orden puede tener una calificación de restaurante.
-
----
-
-## 5. Entidad Items de Orden
-
-La entidad **items_orden** permite almacenar el detalle de los productos incluidos en cada orden.  
-Esta tabla funciona como una relación muchos a muchos entre órdenes e ítems del menú.
-
-### Atributos principales:
-- Orden a la que pertenece
-- Ítem del menú
-- Cantidad
-- Precio unitario
-- Subtotal
-
----
-
-## 6. Entidad Repartidores
-
-La entidad **repartidores** almacena la información de los usuarios encargados de realizar las entregas.
-
-### Atributos principales:
-- Usuario asociado
-- Tipo de vehículo
-- Calificación promedio
-- Disponibilidad
-- Fecha de registro
-
-### Relaciones:
-- Un repartidor puede realizar muchas entregas.
-- Cada repartidor pertenece a un solo usuario.
-
----
-
-## 7. Entidad Entregas
-
-La entidad **entregas** permite llevar el control del proceso de entrega de una orden.
-
-### Atributos principales:
-- Orden asociada
-- Repartidor asignado
-- Estado de la entrega
-- Fecha de asignación
-- Fecha de entrega
-
-### Relaciones:
-- Cada orden tiene una sola entrega.
-- Un repartidor puede realizar muchas entregas.
-- Una entrega puede ser calificada.
-
----
-
-## 8. Entidad Notificaciones
-
-La entidad **notificaciones** registra los mensajes enviados a los usuarios sobre el estado de sus órdenes.
-
-### Atributos principales:
-- Usuario destinatario
-- Orden relacionada
-- Tipo de notificación
-- Fecha de creación
-
-### Relaciones:
-- Un usuario puede recibir muchas notificaciones.
-- Una notificación puede estar relacionada con una orden.
-
----
-
-## 9. Entidad Calificaciones de Restaurante
-
-Esta entidad permite a los clientes calificar a los restaurantes después de completar una orden.
-
-### Relaciones:
-- Cada orden puede tener una sola calificación.
-- Un restaurante puede recibir muchas calificaciones.
-
----
-
-## 10. Entidad Calificaciones de Repartidor
-
-Esta entidad permite a los clientes calificar el servicio del repartidor después de recibir su pedido.
-
-### Relaciones:
-- Cada entrega puede tener una sola calificación.
-- Un repartidor puede recibir muchas calificaciones.
-
----
-
-## 11. Enumeraciones (ENUM)
-
-Las enumeraciones se utilizan para controlar valores específicos dentro del sistema, como:
-- Roles de usuario
-- Estados de las órdenes
-- Estados de las entregas
-- Categorías de restaurantes
-- Tipos de vehículos
-
+Esta separación permite que cada microservicio pueda evolucionar, escalar y mantenerse de forma independiente.
